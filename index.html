@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#21070E">
+<title>Pra Minha Gataa</title>
+<meta property="og:title" content="Pra Minha Gataa">
+<meta property="og:description" content="Tem senha. Só tu sabe.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%23E0182A' d='M16 28C4 19 2 13 2 9.500000000000002C2 5 5.500000000000001 2.5 9 2.5c3 0 5.500000000000001 1.5 7 4c1.5-2.5 4-4 7-4c3.5 0 7 2.5 7 7C30 13 28 19 16 28z'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --vinho: #21070E;
+    --vinho-claro: #3B1420;
+    --foil: #E0182A;
+    --foil-escuro: #8E0716;
+    --vela: #FFB86B;
+    --rosa: #FF5C8A;
+    --creme: #FFF4EC;
+    --balao: "Baloo 2", "Arial Rounded MT Bold", system-ui, sans-serif;
+    --ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+    --topo: max(14px, env(safe-area-inset-top));
+    --base: max(22px, env(safe-area-inset-bottom));
+  }
+
+  * { box-sizing: border-box; margin: 0; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    background: #0D0306;
+    color: var(--creme);
+    font-family: var(--ui);
+    -webkit-text-size-adjust: 100%;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  /* fixed + inset acompanha a área visível do Safari do iPhone melhor que 100vh */
+  .tela {
+    position: fixed;
+    inset: 0;
+    margin: 0 auto;
+    max-width: 460px;
+    overflow: hidden;
+    background: var(--vinho);
+  }
+
+  /* ---------- História ---------- */
+
+  .trilho {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .trilho::-webkit-scrollbar { display: none; }
+
+  .momento {
+    position: relative;
+    flex: 0 0 100%;
+    height: 100%;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    overflow: hidden;
+  }
+
+  .momento img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+  }
+
+  .momento--foto::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to bottom, rgba(20, 4, 8, .62) 0%, rgba(20, 4, 8, 0) 18%),
+      linear-gradient(to top, rgba(20, 4, 8, .94) 0%, rgba(20, 4, 8, .72) 24%, rgba(20, 4, 8, 0) 52%);
+  }
+
+  .legenda {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    padding: 0 24px calc(var(--base) + 14px);
+  }
+
+  .marco {
+    font-family: var(--balao);
+    font-weight: 800;
+    font-size: clamp(3rem, 15vw, 4.25rem);
+    line-height: .95;
+    letter-spacing: -.01em;
+    color: var(--creme);
+    text-shadow: 0 3px 0 var(--foil-escuro), 0 10px 24px rgba(0, 0, 0, .45);
+  }
+
+  .marco--frase { font-size: clamp(2.5rem, 12vw, 3.4rem); }
+
+  .texto {
+    margin-top: 12px;
+    max-width: 21em;
+    font-size: 1.125rem;
+    line-height: 1.42;
+    font-weight: 500;
+    text-wrap: pretty;
+  }
+
+  .barras {
+    position: absolute;
+    top: var(--topo);
+    left: 12px;
+    right: 12px;
+    z-index: 3;
+    display: flex;
+    gap: 4px;
+    pointer-events: none;
+  }
+  .barras i {
+    flex: 1;
+    height: 3px;
+    border-radius: 3px;
+    background: rgba(255, 244, 236, .32);
+    transition: background-color .25s;
+  }
+  .barras i.vista { background: var(--creme); }
+
+  .dona {
+    position: absolute;
+    top: calc(var(--topo) + 14px);
+    left: 16px;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: .875rem;
+    font-weight: 600;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, .6);
+    pointer-events: none;
+  }
+  .dona svg { width: 14px; height: 14px; fill: var(--rosa); }
+
+  .arrasta {
+    position: absolute;
+    right: 20px;
+    bottom: calc(var(--base) + 16px);
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: .8125rem;
+    font-weight: 600;
+    opacity: .9;
+    pointer-events: none;
+    transition: opacity .3s;
+  }
+  .arrasta svg { width: 16px; height: 16px; animation: empurra 1.3s ease-in-out infinite; }
+  .arrasta.some { opacity: 0; }
+  /* a legenda do primeiro momento deixa espaço pra dica não ficar por cima do texto */
+  .momento:first-child .legenda { padding-bottom: calc(var(--base) + 52px); }
+
+  @keyframes empurra { 50% { transform: translateX(6px); } }
+
+  /* ---------- Momento da conversa ---------- */
+
+  .momento--conversa {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: calc(var(--topo) + 56px) 18px calc(var(--base) + 14px);
+    background:
+      radial-gradient(120% 60% at 50% 110%, rgba(224, 24, 42, .28), transparent 70%),
+      var(--vinho);
+  }
+
+  .conversa { display: flex; flex-direction: column; gap: 5px; margin: 18px 0 22px; }
+  .hora {
+    align-self: center;
+    margin-bottom: 8px;
+    font-size: .75rem;
+    color: rgba(255, 244, 236, .58);
+  }
+  .balao {
+    max-width: 82%;
+    padding: 10px 15px;
+    border-radius: 21px;
+    font-size: 1rem;
+    line-height: 1.34;
+  }
+  .balao--eu {
+    align-self: flex-end;
+    background: linear-gradient(160deg, #F2364A, var(--foil) 55%, #B80E20);
+    border-bottom-right-radius: 6px;
+  }
+  .balao--eu + .balao--eu { border-top-right-radius: 6px; }
+  .balao--ela {
+    align-self: flex-start;
+    background: var(--vinho-claro);
+    border-bottom-left-radius: 6px;
+  }
+  .balao--ela + .balao--ela { border-top-left-radius: 6px; }
+  .balao--eu + .balao--ela { margin-top: 10px; }
+
+  /* margem automática centraliza quando cabe e deixa rolar quando a tela é baixa */
+  .momento--conversa > :first-child { margin-top: auto; }
+  .momento--conversa > :last-child { margin-bottom: auto; }
+  .momento--conversa .conversa + .texto { margin-top: 0; }
+  .momento--conversa .texto + .conversa { margin-top: 16px; }
+
+  @media (max-height: 700px) {
+    .momento--conversa { padding-top: calc(var(--topo) + 42px); }
+    .momento--conversa .marco { font-size: 2.6rem; }
+    .momento--conversa .texto { font-size: 1rem; }
+    .conversa { gap: 4px; margin: 12px 0 14px; }
+    .balao { padding: 8px 14px; font-size: .9375rem; }
+  }
+
+  /* ---------- Final ---------- */
+
+  .momento--final {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: calc(var(--topo) + 40px) 26px calc(var(--base) + 20px);
+    background:
+      radial-gradient(90% 45% at 50% 105%, rgba(255, 184, 107, .34), transparent 70%),
+      radial-gradient(70% 40% at 15% 0%, rgba(224, 24, 42, .32), transparent 70%),
+      var(--vinho);
+  }
+
+  .foil {
+    font-family: var(--balao);
+    font-weight: 800;
+    font-size: clamp(5rem, 27vw, 7.5rem);
+    line-height: .86;
+    letter-spacing: -.02em;
+    background: linear-gradient(165deg, #FFC2C2 0%, #FF4A57 16%, var(--foil) 44%, var(--foil-escuro) 74%, #F0414F 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 6px 18px rgba(224, 24, 42, .45));
+    padding-bottom: .08em;
+  }
+
+  .conta { margin-top: 22px; font-family: var(--balao); font-weight: 600; font-size: 1.5rem; line-height: 1.25; }
+  .conta b { font-weight: 800; color: var(--vela); }
+  .conta small { display: block; margin-top: 4px; font-family: var(--ui); font-size: .9375rem; font-weight: 500; color: rgba(255, 244, 236, .72); }
+
+  .recado { margin-top: 30px; font-size: 1.1875rem; line-height: 1.45; font-weight: 500; max-width: 20em; text-wrap: pretty; }
+  .assina { margin-top: 14px; font-family: var(--balao); font-weight: 600; font-size: 1.25rem; color: var(--vela); }
+
+  .denovo {
+    align-self: flex-start;
+    margin-top: 34px;
+    padding: 12px 20px;
+    border: 1.5px solid rgba(255, 244, 236, .4);
+    border-radius: 999px;
+    background: none;
+    color: var(--creme);
+    font: 600 .9375rem var(--ui);
+    touch-action: manipulation;
+  }
+  .denovo:active { background: rgba(255, 244, 236, .12); }
+
+  /* ---------- Bloqueio ---------- */
+
+  .cadeado {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--topo) 24px var(--base);
+    text-align: center;
+    overflow: hidden;
+    background: var(--vinho);
+    transition: transform .75s cubic-bezier(.7, 0, .2, 1), opacity .5s .3s;
+  }
+  .cadeado::before {
+    content: "";
+    position: absolute;
+    inset: -12%;
+    z-index: -1;
+    background: url("fotos/pedido.jpg") center / cover;
+    filter: blur(34px) saturate(1.15) brightness(.5);
+  }
+  .aberto .cadeado { transform: translateY(-104%); opacity: 0; pointer-events: none; }
+
+  .trava { width: 30px; height: 30px; fill: var(--creme); }
+  .trava .arco { transform-origin: 23px 14px; transition: transform .35s cubic-bezier(.3, 1.6, .5, 1); }
+  .acertou .trava .arco { transform: rotate(38deg) translateY(-2px); }
+
+  .cadeado h1 {
+    margin-top: 12px;
+    font-family: var(--balao);
+    font-weight: 800;
+    font-size: 1.75rem;
+    line-height: 1.1;
+  }
+  .pergunta { margin-top: 10px; font-size: 1.0625rem; line-height: 1.35; font-weight: 500; max-width: 16em; }
+
+  .pontos { display: flex; gap: 18px; margin-top: 22px; }
+  .pontos i {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1.5px solid var(--creme);
+    transition: background-color .12s, transform .12s;
+  }
+  .pontos i.cheio { background: var(--creme); transform: scale(1.1); }
+  .pontos.erro { animation: treme .42s; }
+  .acertou .pontos i { background: var(--rosa); border-color: var(--rosa); }
+
+  @keyframes treme {
+    20% { transform: translateX(-11px); }
+    40% { transform: translateX(10px); }
+    60% { transform: translateX(-7px); }
+    80% { transform: translateX(5px); }
+  }
+
+  .dica { min-height: 2.9em; margin-top: 14px; font-size: .9375rem; line-height: 1.4; color: var(--vela); max-width: 18em; }
+
+  .teclado {
+    display: grid;
+    grid-template-columns: repeat(3, 74px);
+    gap: 14px 24px;
+    margin-top: 6px;
+  }
+  .teclado button {
+    width: 74px;
+    height: 74px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 244, 236, .16);
+    color: var(--creme);
+    font: 400 2rem/1 var(--ui);
+    touch-action: manipulation;
+    transition: background-color .25s;
+  }
+  .teclado button:active { background: rgba(255, 244, 236, .46); transition: none; }
+  .teclado .apaga { background: none; font-size: 1rem; font-weight: 500; }
+  .teclado .apaga:active { background: none; opacity: .5; }
+  .teclado .vazio { visibility: hidden; }
+
+  @media (max-height: 640px) {
+    .teclado { grid-template-columns: repeat(3, 62px); gap: 10px 22px; }
+    .teclado button { width: 62px; height: 62px; font-size: 1.7rem; }
+    .cadeado h1 { font-size: 1.5rem; }
+    .dica { margin-top: 8px; }
+  }
+
+  /* ---------- Balões da abertura ---------- */
+
+  .festa { position: absolute; inset: 0; z-index: 11; overflow: hidden; pointer-events: none; }
+  .festa svg {
+    position: absolute;
+    bottom: -140px;
+    width: var(--t);
+    height: var(--t);
+    left: var(--x);
+    animation: sobe var(--d) cubic-bezier(.3, .1, .4, 1) var(--a) forwards;
+  }
+  @keyframes sobe {
+    to { transform: translate(var(--vento), calc(-100vh - 320px)) rotate(var(--giro)); }
+  }
+
+  :focus-visible { outline: 3px solid var(--vela); outline-offset: 3px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cadeado { transition: opacity .3s; }
+    .aberto .cadeado { transform: none; }
+    .arrasta svg, .pontos.erro { animation: none; }
+    .festa { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="foil" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FF9A9A"/>
+      <stop offset=".28" stop-color="#F2283A"/>
+      <stop offset=".62" stop-color="#C40F20"/>
+      <stop offset="1" stop-color="#7C0512"/>
+    </linearGradient>
+    <symbol id="coracao" viewBox="0 0 100 100">
+      <path fill="url(#foil)" d="M50 92C14 64 6 44 6 30C6 15 17 6 29 6c9 0 17 5 21 13c4-8 12-13 21-13c12 0 23 9 23 24c0 14-8 34-44 62z"/>
+      <path fill="#fff" opacity=".5" d="M22 17c-6 3-9 9-9 15c0 2 3 2 3 0c1-5 4-9 8-11c2-1 0-5-2-4z"/>
+    </symbol>
+  </defs>
+</svg>
+
+<main class="tela" id="tela">
+
+  <div class="trilho" id="trilho">
+
+    <article class="momento momento--foto">
+      <img src="fotos/ela.jpg" alt="Ela sorrindo numa selfie no espelho" style="object-position: 50% 30%">
+      <div class="legenda">
+        <h2 class="marco marco--frase">Quem diria</h2>
+        <p class="texto">que a menina linda que me deixou meses esperando um follow ia virar a minha namorada.</p>
+      </div>
+    </article>
+
+    <article class="momento momento--conversa">
+      <h2 class="marco">18/05</h2>
+      <p class="texto">Quando o follow finalmente saiu, eu cheguei assim:</p>
+      <div class="conversa">
+        <span class="hora">18 de maio de 2026, 19:02</span>
+        <p class="balao balao--eu">Demorou, mas finalmente o follow saiu kkkkk</p>
+        <p class="balao balao--eu">Agora o próximo passo é entrar pros melhores amigos ou ainda tá cedo? Kkkk</p>
+        <p class="balao balao--ela">Realmente, confesso que fiquei na dúvida se aceitava ou não</p>
+        <p class="balao balao--ela">Está cedo ainda, mas você está no processo kkkkk</p>
+      </div>
+      <p class="texto">O processo andou, hein?</p>
+    </article>
+
+    <article class="momento momento--foto">
+      <img src="fotos/nos.jpg" alt="Nós dois numa selfie no espelho" style="object-position: 50% 25%">
+      <div class="legenda">
+        <h2 class="marco">22/05</h2>
+        <p class="texto">Quatro dias depois a gente já tava saindo pela primeira vez. Duas semanas depois eu ainda tava contando os dias.</p>
+      </div>
+    </article>
+
+    <article class="momento momento--conversa">
+      <h2 class="marco">16/09</h2>
+      <p class="texto">Eu só queria conhecer a tua família. Tu aproveitou pra cobrar:</p>
+      <div class="conversa">
+        <span class="hora">16 de setembro de 2026, 23:08</span>
+        <p class="balao balao--eu">Tu tem que ver uma data pra eu conhecer a galera KKKKK</p>
+        <p class="balao balao--ela">Apresentar é uma coisa</p>
+        <p class="balao balao--ela">Ser sogro é outra</p>
+        <p class="balao balao--eu">Mas daí é um passinho</p>
+        <p class="balao balao--eu">É um quase lá</p>
+        <p class="balao balao--ela">Só vai faltar o pedido</p>
+      </div>
+      <p class="texto">Recado anotado.</p>
+    </article>
+
+    <article class="momento momento--conversa">
+      <h2 class="marco">01:01</h2>
+      <p class="texto">Na madrugada do dia 24, eu ainda te enrolei:</p>
+      <div class="conversa">
+        <span class="hora">24 de outubro de 2026, 01:01</span>
+        <p class="balao balao--eu">Eu sei que você tá ansiosa com o pedido (e eu também estou)</p>
+        <p class="balao balao--eu">Tu ficaria chateada se fosse no mês que vem?</p>
+        <p class="balao balao--ela">Não amor</p>
+        <p class="balao balao--eu">Você promete?</p>
+        <p class="balao balao--ela">Prometo</p>
+      </div>
+      <p class="texto">Mal sabia tu.</p>
+    </article>
+
+    <article class="momento momento--foto">
+      <img src="fotos/pedido.jpg" alt="Nosso beijo no dia do pedido, com os balões de Namora comigo">
+      <div class="legenda">
+        <h2 class="marco">24/10</h2>
+        <p class="texto">Menti. Era naquele dia mesmo. Balão, flor, vela, e tu disse sim.</p>
+      </div>
+    </article>
+
+    <article class="momento momento--foto">
+      <img src="fotos/namorada.jpg" alt="Ela sorrindo com os balões de coração atrás" style="object-position: 50% 40%">
+      <div class="legenda">
+        <h2 class="marco marco--frase">Minha namorada</h2>
+        <p class="texto">Ainda gosto de falar isso em voz alta.</p>
+      </div>
+    </article>
+
+    <article class="momento momento--foto">
+      <img src="fotos/halloween.jpg" alt="Nós dois fantasiados no Halloween, ela de policial e eu de presidiário">
+      <div class="legenda">
+        <h2 class="marco">31/10</h2>
+        <p class="texto">Nossa primeira festa juntos. Tu de policial, eu de presidiário. Fui preso e nem pensei em recorrer kkkk</p>
+      </div>
+    </article>
+
+    <article class="momento momento--conversa">
+      <h2 class="marco">03/11</h2>
+      <p class="texto">Um dia te mandei um áudio do nada. Tu estranhou:</p>
+      <div class="conversa">
+        <span class="hora">3 de novembro de 2026, 21:45</span>
+        <p class="balao balao--ela">Do nada?</p>
+        <p class="balao balao--ela">O que aconteceu?</p>
+        <p class="balao balao--eu">KKKKKKKK</p>
+        <p class="balao balao--eu">Aconteceu nada meu bem</p>
+        <p class="balao balao--eu">Eu só quis te lembrar que eu te amo</p>
+        <p class="balao balao--ela">Tbm te amo amor</p>
+      </div>
+      <p class="texto">Vou continuar lembrando.</p>
+    </article>
+
+    <article class="momento momento--conversa">
+      <h2 class="marco">10/11</h2>
+      <p class="texto">Te escrevi de madrugada pra tu ler quando acordasse. Chegou isso de volta:</p>
+      <div class="conversa">
+        <span class="hora">10 de novembro de 2026, 05:53</span>
+        <p class="balao balao--ela">Aí amor! Que bom acordar com uma mensagem sua. Obrigada por tudo, sou muito feliz por ter você na minha vida</p>
+        <p class="balao balao--ela">Te amo demais 🥹❤️</p>
+        <p class="balao balao--eu">Eu também te amo muitão!</p>
+      </div>
+      <p class="texto">Quem é feliz aqui sou eu, gata.</p>
+    </article>
+
+    <article class="momento momento--final">
+      <h2 class="foil">1 mês</h2>
+      <p class="conta">
+        Namorando há <b id="diasNamoro">31 dias</b>
+        <small id="diasFollow"></small>
+      </p>
+      <p class="recado">Feliz 1 mês, meu amor. Isso aqui é só o começo. Te amo muitão!</p>
+      <p class="assina">Endreu</p>
+      <button class="denovo" id="denovo" type="button">Ver de novo</button>
+    </article>
+
+  </div>
+
+  <div class="barras" id="barras" aria-hidden="true"></div>
+  <div class="dona" aria-hidden="true">
+    Minha Gataa
+    <svg viewBox="0 0 100 100"><path d="M50 92C14 64 6 44 6 30C6 15 17 6 29 6c9 0 17 5 21 13c4-8 12-13 21-13c12 0 23 9 23 24c0 14-8 34-44 62z"/></svg>
+  </div>
+  <div class="arrasta" id="arrasta" aria-hidden="true">
+    arrasta pro lado
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+  </div>
+
+  <section class="cadeado" id="cadeado" aria-label="Bloqueio">
+    <svg class="trava" viewBox="0 0 32 32" aria-hidden="true">
+      <path class="arco" d="M9 14V10a7 7 0 0 1 14 0v4h-3v-4a4 4 0 0 0-8 0v4z"/>
+      <rect x="6" y="14" width="20" height="15" rx="4"/>
+    </svg>
+    <h1>Só a Minha Gataa entra aqui</h1>
+    <p class="pergunta">Que dia a gente começou a namorar?</p>
+    <div class="pontos" id="pontos" role="img" aria-label="Senha de 4 números"><i></i><i></i><i></i><i></i></div>
+    <p class="dica" id="dica" aria-live="polite">Dia e mês, 4 números</p>
+    <div class="teclado" id="teclado">
+      <button type="button">1</button><button type="button">2</button><button type="button">3</button>
+      <button type="button">4</button><button type="button">5</button><button type="button">6</button>
+      <button type="button">7</button><button type="button">8</button><button type="button">9</button>
+      <button type="button" class="vazio" tabindex="-1" aria-hidden="true"></button>
+      <button type="button">0</button>
+      <button type="button" class="apaga" aria-label="Apagar">Apagar</button>
+    </div>
+  </section>
+
+</main>
+
+<script>
+(() => {
+  const SENHA = "2410";
+  const INICIO_NAMORO = [2026, 10, 24];
+  const FOLLOW_ACEITO = [2026, 5, 18];
+  const DICAS = [
+    "Errou! Tenta de novo, gata",
+    "Dica: teve balão, flor e eu nervoso",
+    "É o dia do \"Namora comigo\", amor kkkk"
+  ];
+
+  const tela = document.getElementById("tela");
+  const trilho = document.getElementById("trilho");
+  const barras = document.getElementById("barras");
+  const pontos = document.getElementById("pontos");
+  const dica = document.getElementById("dica");
+  const arrasta = document.getElementById("arrasta");
+  const momentos = trilho.children;
+  const calmo = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ----- contadores ----- */
+
+  // Date.UTC nos dois lados: conta dias de calendário, sem depender de fuso
+  const diasDesde = ([a, m, d]) => {
+    const h = new Date();
+    return Math.floor((Date.UTC(h.getFullYear(), h.getMonth(), h.getDate()) - Date.UTC(a, m - 1, d)) / 864e5);
+  };
+  const plural = (n) => n + (n === 1 ? " dia" : " dias");
+  const conta = () => {
+    document.getElementById("diasNamoro").textContent = plural(Math.max(diasDesde(INICIO_NAMORO), 0));
+    document.getElementById("diasFollow").textContent = plural(diasDesde(FOLLOW_ACEITO)) + " desde que o follow saiu";
+  };
+  conta();
+  // se ela deixar a aba aberta e voltar depois da meia-noite, o número acompanha
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) conta(); });
+
+  /* ----- história ----- */
+
+  for (let i = 0; i < momentos.length; i++) barras.appendChild(document.createElement("i"));
+
+  const atual = () => Math.round(trilho.scrollLeft / trilho.clientWidth);
+  const irPara = (i) => {
+    const alvo = Math.max(0, Math.min(momentos.length - 1, i));
+    trilho.scrollTo({ left: alvo * trilho.clientWidth, behavior: calmo ? "auto" : "smooth" });
+  };
+  const pintaBarras = () => {
+    const a = atual();
+    [...barras.children].forEach((b, i) => b.classList.toggle("vista", i <= a));
+    if (a > 0) arrasta.classList.add("some");
+  };
+  trilho.addEventListener("scroll", pintaBarras, { passive: true });
+  pintaBarras();
+
+  // toque nas laterais passa o momento, como nos stories; o meio fica livre pro arrasto
+  trilho.addEventListener("click", (e) => {
+    if (e.target.closest("button")) return;
+    const r = trilho.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width;
+    if (x > 0.62) irPara(atual() + 1);
+    else if (x < 0.3) irPara(atual() - 1);
+  });
+
+  document.getElementById("denovo").addEventListener("click", () => irPara(0));
+
+  /* ----- bloqueio ----- */
+
+  let digitado = "";
+  let erros = 0;
+  let travado = false;
+
+  const pintaPontos = () => {
+    [...pontos.children].forEach((p, i) => p.classList.toggle("cheio", i < digitado.length));
+  };
+
+  const soltaBaloes = () => {
+    if (calmo) return;
+    const festa = document.createElement("div");
+    festa.className = "festa";
+    for (let i = 0; i < 12; i++) {
+      const s = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      s.innerHTML = '<use href="#coracao"/>';
+      s.style.cssText =
+        "--t:" + (54 + Math.random() * 70) + "px;" +
+        "--x:" + (-6 + Math.random() * 88) + "%;" +
+        "--d:" + (1.9 + Math.random() * 1.3) + "s;" +
+        "--a:" + (Math.random() * 0.7) + "s;" +
+        "--vento:" + (-40 + Math.random() * 80) + "px;" +
+        "--giro:" + (-22 + Math.random() * 44) + "deg";
+      festa.appendChild(s);
+    }
+    tela.appendChild(festa);
+    setTimeout(() => festa.remove(), 4200);
+  };
+
+  const abre = () => {
+    travado = true;
+    tela.classList.add("acertou");
+    dica.textContent = "Sabia que tu ia lembrar";
+    setTimeout(() => {
+      soltaBaloes();
+      tela.classList.add("aberto");
+    }, calmo ? 200 : 650);
+  };
+
+  const erra = () => {
+    travado = true;
+    pontos.classList.add("erro");
+    dica.textContent = DICAS[Math.min(erros, DICAS.length - 1)];
+    erros++;
+    setTimeout(() => {
+      pontos.classList.remove("erro");
+      digitado = "";
+      pintaPontos();
+      travado = false;
+    }, 460);
+  };
+
+  const tecla = (t) => {
+    if (travado) return;
+    if (t === "apaga") digitado = digitado.slice(0, -1);
+    else if (digitado.length < SENHA.length) digitado += t;
+    pintaPontos();
+    if (digitado.length === SENHA.length) (digitado === SENHA ? abre : erra)();
+  };
+
+  document.getElementById("teclado").addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b || b.classList.contains("vazio")) return;
+    tecla(b.classList.contains("apaga") ? "apaga" : b.textContent);
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (!tela.classList.contains("aberto")) {
+      if (/^\d$/.test(e.key)) tecla(e.key);
+      else if (e.key === "Backspace") tecla("apaga");
+      return;
+    }
+    if (e.key === "ArrowRight") irPara(atual() + 1);
+    else if (e.key === "ArrowLeft") irPara(atual() - 1);
+  });
+})();
+</script>
+</body>
+</html>
